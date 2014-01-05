@@ -1,0 +1,37 @@
+Correct Smartmaker Smarthost 16X2 Board Pin Config
+The Smartmaker Smarthost LCD 16X2 boards (Smarthost LCD PRO, Smarthost LCD 16X2 MOD, and Smarthost LCD 16X2) are all carrier boards for Hitachi HD44780 driver-compatible 16x2 LCD displays.
+
+In theory, these boards should "just work" with the Arduino LiquidCrystal library. The examples for that lib are all built around this de facto standard interface. And according to the document in the Smartmaker Wiki, the pins used in the example code (digital pins 12, 11, 5, 4, 3, and 2) are supposed to be the same one that Smarthost LCD boards use: Smartbus pins B13, B12, B06, B05, B04, and B03, which map to the Arduino pins in question.
+
+The correct pins
+
+It turns out the reality of the boards doesn't match the Smartmaker wiki documentation. The the upper values pins (11/B12 and 12/B13) are not actually connected at all. You can see this pretty easily on the MOD, where no traces connect to those pins on the board!
+
+This table has the correct mapping.
+
+LCD Pin	Smartbus B Pin	Arduino Pin	Notes
+D7	B03	2	
+D6	B04	3	
+D5	B05	4	
+D4	B06	5	
+E	B07	6	This was supposed to be 11/B12 according to convention and the Smartmaker docs
+RS	B08	7	This was supposed to be 12/B13 according to convention and the Smartmaker docs
+Working example code1
+
+The following code will work when run on a Smartmaker Smartcore attached to a Smarthost LCD.
+
+#include <LiquidCrystal.h>
+// The line above this needs to have the parenthesis replaced with less-than and greater-than brackets.
+
+LiquidCrystal lcd(7, 6, 5, 4, 3, 2);
+
+void setup() {
+  lcd.begin(16, 2);
+  lcd.print("hello, world!");
+}
+
+void loop() {
+  lcd.setCursor(0, 1);
+  lcd.print(millis()/1000);
+}
+1 The example code was taken from a comment on the page: https://www.sparkfun.com/products/709
